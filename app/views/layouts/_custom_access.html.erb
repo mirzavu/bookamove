@@ -1,6 +1,10 @@
 <% if validate_special_permission('create.moves', @current_actions) %>
     <li class='text-center'>
+      <% if @group == 'admin' %>
       <a href='<%= move_records_path %>' class="btn-new-move btn-blue" style="padding-left: 10px !important;">NEW MOVE</a>
+      <% else %>
+      <a href='<%= referrals_path ra: @current_user.email %>' class="btn-new-move btn-red" style="padding-left: 10px !important;">MOVE REFERRAL</a>
+      <% end %>
     </li>
 <% end %>
 
