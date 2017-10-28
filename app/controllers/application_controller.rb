@@ -54,6 +54,10 @@ class ApplicationController < ActionController::Base
         @current_user.roles.map(&:name) if @current_user.roles
       end
 
+      @group ||= Rails.cache.fetch("group/#{@current_user.id}") do
+        @current_user.group @role_level
+      end
+
       @all_subtask ||= Rails.cache.fetch("all_subtask_staff_group/#{@current_user.account_id}") do
         SubtaskStaffGroup.where(account_id: @current_user.account_id, mailbox: true, active: true)
       end

@@ -17,6 +17,19 @@ class User < ActiveRecord::Base
   #validates :email, presence: true, length: {maximum: 255}, format: {with: ->(user) { user.email.match(/\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/) ? /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/ : /([Nn]\/[Aa])+/ }}, uniqueness: {case_sensitive: false}
   validates_uniqueness_of :email, case_sensitive: false, scope: :account_id, unless: 'email.match(/([Nn]\/[Aa])+/)', :on => :create
 
+  def group(user_role_level)
+    if user_role_level > 50
+      group = 'admin'
+    elsif user_role_level > 10 and user_role_level < 50
+      group = 'customer'
+    else 
+      group = 'mover'
+    end
+    group
+  end
+
+
+
   def self.authenticate(email, password, account)
     user = find_by_email_and_account_id(email, account)
     if user && user.password_hash == BCrypt::Engine.hash_secret(password, user.password_salt) && !name.match(/([Nn]\/[Aa])+/)
@@ -32,6 +45,7 @@ class User < ActiveRecord::Base
       self.password_hash = BCrypt::Engine.hash_secret(password, password_salt)
     end
   end
+
 
   def self.get_information_email(id)
     user = find_by_id(id)
